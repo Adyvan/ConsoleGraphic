@@ -26,6 +26,8 @@ namespace ConsoleGraphic
         {
         }
 
+        public float Dot(Vec2 a) => X * a.X + Y * a.Y;
+
         public static Vec2 operator +(Vec2 a, Vec2 b) => new Vec2(a.X + b.X, a.Y + b.Y);
         public static Vec2 operator -(Vec2 a, Vec2 b) => new Vec2(a.X - b.X, a.Y - b.Y);
         public static Vec2 operator *(Vec2 a, Vec2 b) => new Vec2(a.X * b.X, a.Y * b.Y);
@@ -61,6 +63,8 @@ namespace ConsoleGraphic
         public Vec3() : this(0)
         {
         }
+
+        public float Dot(Vec3 a) => X * a.X + Y * a.Y + Z * a.Z;
 
         public static Vec3 operator +(Vec3 a, Vec3 b) => new Vec3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         public static Vec3 operator -(Vec3 a, Vec3 b) => new Vec3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
