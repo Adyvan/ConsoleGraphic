@@ -27,6 +27,7 @@ namespace ConsoleGraphic
         }
 
         public float Dot(Vec2 a) => X * a.X + Y * a.Y;
+        public Vec2 Reflect(Vec2 normal) => (normal * this.Dot(normal) * 2) - this;
 
         public static Vec2 operator +(Vec2 a, Vec2 b) => new Vec2(a.X + b.X, a.Y + b.Y);
         public static Vec2 operator -(Vec2 a, Vec2 b) => new Vec2(a.X - b.X, a.Y - b.Y);
@@ -34,6 +35,11 @@ namespace ConsoleGraphic
         public static Vec2 operator /(Vec2 a, Vec2 b) => new Vec2(a.X / b.X, a.Y / b.Y);
         public static Vec2 operator *(Vec2 a, float f) => new Vec2(a.X * f, a.Y * f);
         public static Vec2 operator /(Vec2 a, float f) => new Vec2(a.X / f, a.Y / f);
+
+        public override string ToString()
+        {
+            return $"v2{{{X},{Y}}}";
+        }
     }
 
     public class Vec3
@@ -65,6 +71,8 @@ namespace ConsoleGraphic
         }
 
         public float Dot(Vec3 a) => X * a.X + Y * a.Y + Z * a.Z;
+        public Vec3 Reflect(Vec3 normal) => (normal * this.Dot(normal) * 2) - this;
+        public Vec3 Cross(Vec3 b) => new Vec3(Y * b.Z - Z * b.Y, Z * b.X - X * b.Z, X * b.Y - Y * b.X);
 
         public static Vec3 operator +(Vec3 a, Vec3 b) => new Vec3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
         public static Vec3 operator -(Vec3 a, Vec3 b) => new Vec3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
@@ -72,5 +80,11 @@ namespace ConsoleGraphic
         public static Vec3 operator /(Vec3 a, Vec3 b) => new Vec3(a.X / b.X, a.Y / b.Y, a.Z / b.Z);
         public static Vec3 operator *(Vec3 a, float f) => new Vec3(a.X * f, a.Y * f, a.Z * f);
         public static Vec3 operator /(Vec3 a, float f) => new Vec3(a.X / f, a.Y / f, a.Z / f);
+
+
+        public override string ToString()
+        {
+            return $"v3{{{X},{Y},{Z}}}";
+        }
     }
 }

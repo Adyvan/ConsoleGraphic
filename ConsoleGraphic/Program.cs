@@ -33,6 +33,14 @@ namespace ConsoleGraphic
             var time = DateTime.Now;
             
             Vec3 camPos = new Vec3(-2, 0, 0);
+            Vec3 camDirection = (new Vec3() - camPos).Normalize; // Look at 0,0,0 point
+            Vec3 camUp = new Vec3(0, 0, 1);
+            var viewPlaneOX = camUp.Cross(camDirection).Normalize;
+            var viewPlaneOY = camDirection.Cross(viewPlaneOX).Normalize;
+            float camMinDistance = 1f;
+            Vec3 viewPlanePosition = camDirection * camMinDistance + camPos;
+
+
             while (key.Key != ConsoleKey.Escape)
             {
                 Vec3 light = new Vec3(MathF.Sin(frame * 0.01f) - 0.5f, -1, MathF.Cos(frame * 0.01f) - 0.5f).Normalize;
@@ -41,19 +49,17 @@ namespace ConsoleGraphic
                 {
                     for (int c = 0; c < Width; c++)
                     {
-                        uv = new Vec2(l, c) / new Vec2(Height, Width) * 2f - new Vec2(1);
-                        float x = l * 1f / Height * 2f - 1f;
-                        float y = c * 1f / Width * 2f - 1f;
-                        uv.Y *= aspect;
+                        uv = new Vec2(c, l) / new Vec2(Width, Height) * 2f - new Vec2(1);
+                        uv.X *= aspect;
 
-                        var rayViewPlane = new Vec3(1, uv.X, uv.Y).Normalize;
+                        var viewPlanePoint = viewPlaneOX * uv.X + viewPlaneOY * uv.Y + viewPlanePosition;
+                        var rayForPoint = (viewPlanePoint - camPos).Normalize;
 
-                        Vec2 intersection = Sphere(camPos, rayViewPlane, 1);
+                        Vec2 intersection = Sphere(camPos, rayForPoint, 1);
 
                         if(intersection.X > 0)
                         {
-
-                            Vec3 itPoint = camPos + rayViewPlane * intersection.X;
+                            Vec3 itPoint = camPos + rayForPoint * intersection.X;
                             var diff = itPoint.Normalize.Dot(light);
                             screen[l * Width + c] = diff.ToPixelByte();
                         }
@@ -66,7 +72,11 @@ namespace ConsoleGraphic
                 PrintScreen();
                 frame++;
                 var delay = DateTime.Now - time;
-                Console.WriteLine(delay);
+                Console.Write(delay);
+                Console.Write($"planeOX {viewPlaneOX} ");
+                Console.Write($"planeOY {viewPlaneOY} ");
+
+                Console.WriteLine();
                 if (delay.TotalSeconds < (1f / fixedFps))
                 {
                     Thread.Sleep((int)(msPerFrame - delay.TotalMilliseconds));
@@ -100,9 +110,14 @@ namespace ConsoleGraphic
         private static Vec2 Sphere(Vec3 cameraPos, Vec3 ray, float radius)
         {
             var b = cameraPos.Dot(ray);
-            var c = cameraPos.Dot(cameraPos) - radius * radius;
+            var c = cameraPos.SqrLenght - radius * radius;
             var h = b * b - c;
-            if (h < 0) return new Vec2(-1);
+
+            if (h < 0)
+            {
+                return new Vec2(-1);
+            }
+
             h = MathF.Sqrt(h);
             return new Vec2(-b - h, -b + h);
         }
