@@ -40,10 +40,12 @@ namespace ConsoleGraphic
             float camMinDistance = 1f;
             Vec3 viewPlanePosition = camDirection * camMinDistance + camPos;
 
+            var sphareCenter = new Vec3(0);
+
 
             while (key.Key != ConsoleKey.Escape)
             {
-                Vec3 light = new Vec3(MathF.Sin(frame * 0.01f) - 0.5f, -1, MathF.Cos(frame * 0.01f) - 0.5f).Normalize;
+                Vec3 light = new Vec3(MathF.Sin(frame * 0.01f) - 0.5f, MathF.Cos(frame * 0.01f) + 0.5f, -1).Normalize;
 
                 for (int l = 0; l < Height ; l++)
                 {
@@ -55,12 +57,13 @@ namespace ConsoleGraphic
                         var viewPlanePoint = viewPlaneOX * uv.X + viewPlaneOY * uv.Y + viewPlanePosition;
                         var rayForPoint = (viewPlanePoint - camPos).Normalize;
 
-                        Vec2 intersection = Sphere(camPos, rayForPoint, 1);
+                        var intersection = MySphare(camPos, rayForPoint, sphareCenter, 1);
 
-                        if(intersection.X > 0)
+                        if(intersection != null)
                         {
-                            Vec3 itPoint = camPos + rayForPoint * intersection.X;
-                            var diff = itPoint.Normalize.Dot(light);
+                            Vec3 normal = (intersection - sphareCenter).Normalize;
+                            Vec3 diffNorm = rayForPoint.Reflect(normal) * -1;
+                            var diff = diffNorm.Dot(light);
                             screen[l * Width + c] = diff.ToPixelByte();
                         }
                         else
@@ -107,19 +110,17 @@ namespace ConsoleGraphic
             return (byte) Math.Clamp(f * byte.MaxValue, byte.MinValue, byte.MaxValue);
         }
 
-        private static Vec2 Sphere(Vec3 cameraPos, Vec3 ray, float radius)
+        private static Vec3 MySphare(Vec3 camPos, Vec3 ray, Vec3 sphereCenter, float radius)
         {
-            var b = cameraPos.Dot(ray);
-            var c = cameraPos.SqrLenght - radius * radius;
-            var h = b * b - c;
-
-            if (h < 0)
+            var vectorToCenter = camPos - sphereCenter;
+            var normal = ray.Cross(vectorToCenter);
+            var sqrD = normal.SqrLenght / ray.SqrLenght;
+            if(sqrD > radius * radius)
             {
-                return new Vec2(-1);
+                return null;
             }
 
-            h = MathF.Sqrt(h);
-            return new Vec2(-b - h, -b + h);
+            return ray * -MathF.Sqrt(radius * radius - sqrD) + ray * vectorToCenter.Lenght;
         }
     }
 }
