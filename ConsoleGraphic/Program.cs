@@ -45,7 +45,9 @@ namespace ConsoleGraphic
 
             while (key.Key != ConsoleKey.Escape)
             {
-                Vec3 light = new Vec3(MathF.Sin(frame * 0.01f) - 0.5f, MathF.Cos(frame * 0.01f) + 0.5f, -1).Normalize;
+                sphareCenter += Input(key) * 0.1f;
+                key = default;
+                Vec3 light = new Vec3(-1 * MathF.Cos(frame * 0.01f) + 0.5f, 0.5f * MathF.Cos(frame * 0.01f), -1).Normalize;
 
                 for (int l = 0; l < Height ; l++)
                 {
@@ -88,6 +90,33 @@ namespace ConsoleGraphic
             }
 
             thread.Join();
+        }
+
+        private static Vec3 Input(ConsoleKeyInfo key)
+        {
+            var vec = new Vec3(0);
+            switch(key.Key)
+            {
+                case ConsoleKey.W:
+                    vec.X += 1;
+                    break;
+                case ConsoleKey.S:
+                    vec.X -= 1;
+                    break;
+                case ConsoleKey.D:
+                    vec.Y += 1;
+                    break;
+                case ConsoleKey.A:
+                    vec.Y -= 1;
+                    break;
+                case ConsoleKey.E:
+                    vec.Z += 1;
+                    break;
+                case ConsoleKey.Q:
+                    vec.Z -= 1;
+                    break;
+            }
+            return vec;
         }
 
         private static void PrintScreen()
