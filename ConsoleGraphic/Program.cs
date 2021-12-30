@@ -13,6 +13,11 @@ namespace ConsoleGraphic
 
         static void Main(string[] args)
         {
+            //for Windows
+            if (OperatingSystem.IsWindows())
+            {
+                Console.SetWindowSize(Width, Height);
+            }
             //Input
             ConsoleKeyInfo key = default;
             var thread = new Thread(()=> {
@@ -25,7 +30,7 @@ namespace ConsoleGraphic
 
 
             //Render
-            uint fixedFps = 50;
+            uint fixedFps = 10;
             uint msPerFrame = 1000 / fixedFps; 
             uint frame = 0;
             var aspect = SymbolAspectRatio * Width / Height;
@@ -121,6 +126,10 @@ namespace ConsoleGraphic
 
         private static void PrintScreen()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                Console.Clear();
+            }
             foreach (var p in screen)
             {
                 Console.Write(GetPixelColor(p));
