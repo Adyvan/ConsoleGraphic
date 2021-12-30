@@ -47,7 +47,7 @@ namespace ConsoleGraphic
             {
                 sphareCenter += Input(key) * 0.1f;
                 key = default;
-                Vec3 light = new Vec3(-1 * MathF.Cos(frame * 0.01f) + 0.5f, 0.5f * MathF.Cos(frame * 0.01f), -1).Normalize;
+                Vec3 light = new Vec3(0.72f, MathF.Cos(frame * 0.01f), MathF.Sin(frame * 0.02f)).Normalize;
 
                 for (int l = 0; l < Height ; l++)
                 {
@@ -64,7 +64,7 @@ namespace ConsoleGraphic
                         if(intersection != null)
                         {
                             Vec3 normal = (intersection - sphareCenter).Normalize;
-                            Vec3 diffNorm = rayForPoint.Reflect(normal) * -1;
+                            Vec3 diffNorm = rayForPoint.Reflect(normal);
                             var diff = diffNorm.Dot(light);
                             screen[l * Width + c] = diff.ToPixelByte();
                         }
